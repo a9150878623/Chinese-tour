@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>赫尔辛基音频导览</title>
+</head>
+
+<body style="font-family:sans-serif;text-align:center;max-width:520px;margin:auto;padding:20px;">
+
+<img src="Intro.jpg" style="width:100%;border-radius:12px;" />
+
+<h2>赫尔辛基。轻松漫步市中心</h2>
+
+<p style="font-size:16px;line-height:1.6;">
+跟随音频导览，发现那些你平时不会注意的细节。
+</p>
+
+<hr>
+
+<p style="text-align:left;line-height:1.8;">
+📍 集市广场：哪一栋低调的外立面，其实是总统府？<br>
+⛴️ 开往要塞的渡轮：为什么会有一条水下通道？<br>
+🎡 摩天轮：那节特别车厢里有什么？<br>
+🌊 海滨：在哪能看见旧港口的痕迹？<br>
+🏛️ 博物馆：哪件展品会把你带回过去？<br>
+⛪ 大教堂：入口上方那四个特别的字母意味着什么？<br>
+📚 图书馆：最脆弱的珍藏藏在何处？<br>
+🌳 公园：什么被称为“绿色的黄金”，哪一种浆果会立刻把你“出卖”？<br>
+☕ 谁是世界上最会喝咖啡的民族？有哪些当地美味值得一试？<br>
+🧭 芬兰人特别珍视哪些品质？<br>
+❄️ 什么是拉普兰？
+</p>
+
+<img src="images/map.jpeg" style="width:100%;border-radius:12px;margin:20px 0;">
+
+<hr>
+
+<h3>🎧 如何购买音频导览</h3>
+
+<p style="text-align:left;">
+<b>步骤 1：</b>请扫描二维码完成支付，价格：49元
+</p>
+
+<div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:10px;">
+
+  <div>
+    <img src="images/wechat-qr.png" width="200" /><br>
+    <a href="#付款:artem0532(artem0532)/城市语音导览收款/001">链接</a>
+  </div>
+
+  <div>
+    <img src="YOUR_ALIPAY_QR.png" width="200" /><br>
+    <a href="YOUR_ALIPAY_PAY_LINK">链接</a>
+  </div>
+
+</div>
+
+<hr>
+
+<p style="text-align:left;">
+<b>步骤 2：</b>支付完成后点击下方按钮
+</p>
+
+<button onclick="openForm()" style="padding:14px 24px;font-size:16px;">
+我已支付，点击获取访问代码
+</button>
+
+<div id="formBox" style="display:none;margin-top:15px;">
+  <p>请输入您的微信 ID</p>
+
+  <input id="wechat" placeholder="WeChat ID" style="padding:8px;width:80%;" />
+  <br><br>
+
+  <button onclick="generate()" style="padding:16px 28px;font-size:18px;">
+    生成访问代码
+  </button>
+</div>
+
+<p id="msg" style="color:red;margin-top:10px;"></p>
+
+<div id="codeArea" style="display:none;margin-top:15px;flex-direction:column;align-items:center;">
+
+  <p id="codeBox" style="font-size:22px;font-weight:bold;margin:0;"></p>
+
+  <button onclick="copyCode()" style="padding:6px 12px;margin-top:8px;">
+    复制
+  </button>
+
+  <span id="copyStatus" style="color:green;font-size:14px;"></span>
+
+  <p id="saveHint" style="display:none;color:#666;font-size:14px;margin-top:10px;">
+    保存您的代码以便后续使用。该代码有效期为4个月。每位用户必须购买自己的唯一访问代码。
+  </p>
+
+</div>
+
+<hr>
+
+<p style="text-align:left;">
+<b>步骤 3：</b>进入音频导览
+</p>
+
+<!-- ✅ ИЗМЕНЕНИЕ: КНОПКА ВСЕГДА ВИДНА -->
+<div id="enterBlock" style="margin-top:15px;">
+  <a id="enterLink" href="access.html">
+    <button style="padding:12px 20px;font-size:16px;">
+      🎧 访问音频导览
+    </button>
+  </a>
+</div>
+
+<hr>
+
+<div style="margin-top:25px;text-align:left;">
+
+  <button onclick="sharePage()" style="padding:10px 16px;font-size:14px;">
+    📤 分享给朋友
+  </button>
+
+  <span id="shareMsg" style="color:green;font-size:14px;margin-left:10px;"></span>
+
+</div>
+
+<hr>
+
+<div style="text-align:left;line-height:1.8;">
+
+  <p><b>合作</b></p>
+
+  <p>
+    📧电子邮件：relaxtour.support@gmail.com<br>
+
+    💬微信：
+    <a href="weixin://dl/chat?artem0532" style="color:#1677ff;text-decoration:underline;">
+      artem0532
+    </a>
+  </p>
+
+</div>
+
+<script>
+function randomChar() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return chars[Math.floor(Math.random() * chars.length)];
+}
+
+function getMonthCode() {
+  return String(new Date().getMonth() + 1).padStart(2, "0");
+}
+
+function generateCode() {
+  return (
+    randomChar() +
+    getMonthCode() +
+    "Y" +
+    randomChar() +
+    randomChar() +
+    "5" +
+    randomChar()
+  );
+}
+
+/* COPY */
+function copyCode() {
+  const code = document.getElementById("codeBox").innerText.trim();
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(code).then(() => {
+      document.getElementById("copyStatus").innerText = "✔ 代码已复制";
+    });
+  } else {
+    const t = document.createElement("textarea");
+    t.value = code;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+
+    document.getElementById("copyStatus").innerText = "✔ 代码已复制";
+  }
+}
+
+/* SHARE */
+function sharePage() {
+  const url = window.location.href;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(() => {
+      document.getElementById("shareMsg").innerText = "✔ 链接已复制";
+    });
+  } else {
+    const t = document.createElement("textarea");
+    t.value = url;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+
+    document.getElementById("shareMsg").innerText = "✔ 链接已复制";
+  }
+}
+
+/* OPEN FORM */
+function openForm() {
+  document.getElementById("formBox").style.display = "block";
+}
+
+/* RESET */
+function checkReset() {
+  const firstVisit = localStorage.getItem("firstVisit");
+  const now = Date.now();
+  const FOUR_MONTHS = 4 * 30 * 24 * 60 * 60 * 1000;
+
+  if (!firstVisit) {
+    localStorage.setItem("firstVisit", now);
+    return;
+  }
+
+  if (now - parseInt(firstVisit) > FOUR_MONTHS) {
+    localStorage.removeItem("codeCount");
+    localStorage.removeItem("lastCode");
+    localStorage.setItem("firstVisit", now);
+  }
+}
+
+/* GENERATE */
+function generate() {
+
+  document.getElementById("msg").innerText = "";
+
+  let count = parseInt(localStorage.getItem("codeCount")) || 0;
+
+  if (count >= 2) {
+    document.getElementById("msg").innerText =
+      "您已达到生成上限。每位用户需单独购买访问代码";
+    return;
+  }
+
+  const wechat = document.getElementById("wechat").value.trim();
+
+  if (!wechat) {
+    document.getElementById("msg").innerText = "请输入微信ID";
+    return;
+  }
+
+  const code = generateCode();
+
+  localStorage.setItem("lastCode", code);
+
+  document.getElementById("codeArea").style.display = "flex";
+  document.getElementById("codeBox").innerText = code;
+
+  document.getElementById("saveHint").style.display = "block";
+
+  document.getElementById("enterBlock").style.display = "block";
+  document.getElementById("enterLink").href =
+    "access.html?code=" + code;
+
+  count++;
+  localStorage.setItem("codeCount", count);
+
+  document.getElementById("formBox").style.display = "none";
+}
+
+window.onload = function() {
+  checkReset();
+
+  const saved = localStorage.getItem("lastCode");
+
+  if (saved) {
+    document.getElementById("codeArea").style.display = "flex";
+    document.getElementById("codeBox").innerText = saved;
+
+    document.getElementById("saveHint").style.display = "block";
+
+    document.getElementById("enterBlock").style.display = "block";
+    document.getElementById("enterLink").href =
+      "access.html?code=" + saved;
+  }
+};
+</script>
+
+</body>
+</html>
