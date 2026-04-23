@@ -134,13 +134,14 @@
 
   <p>
     📧电子邮件： relaxtour.support@gmail.com<br>
+
     💬微信： artem0532
-  </p>
+    </p>
 
 </div>
 
 <script>
-/* ✅ preview (ИСПРАВЛЕНО ДЛЯ WECHAT) */
+/* ✅ preview с pinch zoom */
 function previewImage(src) {
   let overlay = document.createElement("div");
   overlay.style.position = "fixed";
@@ -153,17 +154,43 @@ function previewImage(src) {
   overlay.style.alignItems = "center";
   overlay.style.justifyContent = "center";
   overlay.style.zIndex = 9999;
+  overlay.style.touchAction = "none";
 
   let img = document.createElement("img");
   img.src = src;
   img.style.maxWidth = "90%";
   img.style.maxHeight = "90%";
   img.style.borderRadius = "10px";
+  img.style.transformOrigin = "center center";
+
+  let scale = 1;
+  let startDist = 0;
+
+  overlay.addEventListener("touchstart", function(e) {
+    if (e.touches.length === 2) {
+      startDist = getDistance(e.touches);
+    }
+  });
+
+  overlay.addEventListener("touchmove", function(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      let newDist = getDistance(e.touches);
+      let zoom = newDist / startDist;
+      scale = Math.min(Math.max(scale * zoom, 1), 4);
+      img.style.transform = "scale(" + scale + ")";
+      startDist = newDist;
+    }
+  });
+
+  function getDistance(touches) {
+    let dx = touches[0].clientX - touches[1].clientX;
+    let dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 
   overlay.appendChild(img);
-
   overlay.onclick = () => overlay.remove();
-
   document.body.appendChild(overlay);
 }
 
@@ -192,13 +219,7 @@ function generateCode() {
 function copyCode() {
   const code = document.getElementById("codeBox").innerText.trim();
 
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(code).then(() => {
-      setTimeout(() => {
-        document.getElementById("copyStatus").innerText = "✔ 代码已复制";
-      }, 100);
-    });
-  } else {
+  try {
     const t = document.createElement("textarea");
     t.value = code;
     document.body.appendChild(t);
@@ -206,9 +227,9 @@ function copyCode() {
     document.execCommand("copy");
     document.body.removeChild(t);
 
-    setTimeout(() => {
-      document.getElementById("copyStatus").innerText = "✔ 代码已复制";
-    }, 100);
+    alert("✔ 代码已复制");
+  } catch (e) {
+    alert("复制失败，请手动复制");
   }
 }
 
@@ -216,13 +237,7 @@ function copyCode() {
 function sharePage() {
   const url = window.location.href;
 
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(url).then(() => {
-      setTimeout(() => {
-        document.getElementById("shareMsg").innerText = "✔ 链接已复制";
-      }, 100);
-    });
-  } else {
+  try {
     const t = document.createElement("textarea");
     t.value = url;
     document.body.appendChild(t);
@@ -230,9 +245,9 @@ function sharePage() {
     document.execCommand("copy");
     document.body.removeChild(t);
 
-    setTimeout(() => {
-      document.getElementById("shareMsg").innerText = "✔ 链接已复制";
-    }, 100);
+    alert("✔ 链接已复制");
+  } catch (e) {
+    alert("复制失败，请手动复制");
   }
 }
 
