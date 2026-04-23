@@ -2,12 +2,20 @@
 <html>
 <head>
   <meta charset="UTF-8">
+
+  <!-- ✅ viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- ✅ принудительно светлая тема -->
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+
   <title>赫尔辛基音频导览</title>
 </head>
 
-<body style="font-family:sans-serif;text-align:center;max-width:520px;margin:auto;padding:20px;">
+<body style="font-family:sans-serif;text-align:center;max-width:520px;margin:auto;padding:20px;background:#fff;color:#000;">
 
-<img src="images/Intro.jpg" style="width:100%;border-radius:12px;" />
+<img src="Intro.jpg" onclick="previewImage('Intro.jpg')" style="width:100%;border-radius:12px;" />
 
 <h2>赫尔辛基。轻松漫步市中心</h2>
 
@@ -31,7 +39,7 @@
 ❄️ 什么是拉普兰？
 </p>
 
-<img src="images/map.jpeg" style="width:100%;border-radius:12px;margin:20px 0;">
+<img src="images/map.jpeg" onclick="previewImage('images/map.jpeg')" style="width:100%;border-radius:12px;margin:20px 0;">
 
 <hr>
 
@@ -44,13 +52,11 @@
 <div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:10px;">
 
   <div>
-    <img src="images/wechat-qr.png" width="200" /><br>
-    <a href="#付款:artem0532(artem0532)/城市语音导览收款/001">链接</a>
+    <img src="images/wechat-qr.png" width="200" onclick="previewImage('images/wechat-qr.png')" />
   </div>
 
   <div>
-    <img src="YOUR_ALIPAY_QR.png" width="200" /><br>
-    <a href="YOUR_ALIPAY_PAY_LINK">链接</a>
+    <img src="YOUR_ALIPAY_QR.png" width="200" onclick="previewImage('YOUR_ALIPAY_QR.png')" />
   </div>
 
 </div>
@@ -100,7 +106,6 @@
 <b>步骤 3：</b>进入音频导览
 </p>
 
-<!-- ✅ ИЗМЕНЕНИЕ: КНОПКА ВСЕГДА ВИДНА -->
 <div id="enterBlock" style="margin-top:15px;">
   <a id="enterLink" href="access.html">
     <button style="padding:12px 20px;font-size:16px;">
@@ -128,17 +133,21 @@
   <p><b>合作</b></p>
 
   <p>
-    📧电子邮件：relaxtour.support@gmail.com<br>
+    📧电子邮件： relaxtour.support@gmail.com<br>
 
-    💬微信：
-    <a href="weixin://dl/chat?artem0532" style="color:#1677ff;text-decoration:underline;">
-      artem0532
+    💬微信： artem0532
     </a>
   </p>
 
 </div>
 
 <script>
+/* ✅ preview */
+function previewImage(src) {
+  const w = window.open("");
+  w.document.write('<img src="' + src + '" style="width:100%">');
+}
+
 function randomChar() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   return chars[Math.floor(Math.random() * chars.length)];
@@ -155,8 +164,8 @@ function generateCode() {
     "Y" +
     randomChar() +
     randomChar() +
-    "5" +
-    randomChar()
+randomChar() +
+    "5"
   );
 }
 
