@@ -32,27 +32,104 @@
 
   <h2>🎧 音频导览</h2>
 
-  <img src="images/map.jpg" style="width:100%;border-radius:10px;margin-bottom:20px;" />
+  <img src="images/map.jpg"
+       onclick="previewImage('images/map.jpg')"
+       style="width:100%;border-radius:10px;margin-bottom:20px;" />
 
-  <p style="text-align:left;">
-    您可以手动播放每个讲解点的音频，<br>
-    或者点击下方按钮自动连续播放所有音频。
-  </p>
+  <div id="autoBlock">
+    <p style="text-align:left;">
+      您可以手动播放每个讲解点的音频，<br>
+      或者点击下方按钮自动连续播放所有音频。
+    </p>
 
-  <button onclick="playAll()" style="margin:15px auto;padding:14px 22px;font-size:16px;display:block;">
-    ▶ 自动播放全部音频
-  </button>
+    <button onclick="playAll()" style="margin:15px auto;padding:14px 22px;font-size:16px;display:block;">
+      ▶ 自动播放全部音频
+    </button>
+  </div>
 
   <div id="points"></div>
 </div>
 
 <script>
 
-// ===== защита =====
+function isWeChat() {
+  return /micromessenger/i.test(navigator.userAgent);
+}
+
+/* =========================
+   IMAGE ZOOM + DRAG
+========================= */
+function previewImage(src) {
+  let overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.background = "rgba(0,0,0,0.9)";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = 9999;
+  overlay.style.overflow = "hidden";
+  overlay.style.touchAction = "none";
+
+  let img = document.createElement("img");
+  img.src = src;
+  img.style.maxWidth = "90%";
+  img.style.maxHeight = "90%";
+  img.style.transformOrigin = "center";
+
+  let scale = 1;
+  let posX = 0, posY = 0;
+  let startX = 0, startY = 0;
+  let startDist = 0;
+
+  function update() {
+    img.style.transform = `translate(${posX}px,${posY}px) scale(${scale})`;
+  }
+
+  function dist(t) {
+    let dx = t[0].clientX - t[1].clientX;
+    let dy = t[0].clientY - t[1].clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  overlay.addEventListener("touchstart", e => {
+    if (e.touches.length === 2) {
+      startDist = dist(e.touches);
+    } else {
+      startX = e.touches[0].clientX - posX;
+      startY = e.touches[0].clientY - posY;
+    }
+  });
+
+  overlay.addEventListener("touchmove", e => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      let d = dist(e.touches);
+      scale *= d / startDist;
+      scale = Math.max(1, Math.min(scale, 4));
+      startDist = d;
+    } else if (scale > 1) {
+      posX = e.touches[0].clientX - startX;
+      posY = e.touches[0].clientY - startY;
+    }
+    update();
+  });
+
+  overlay.onclick = () => overlay.remove();
+
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+}
+
+/* =========================
+   CODE CHECK (ONLY CHANGE HERE)
+========================= */
 let attempts = parseInt(localStorage.getItem("attempts")) || 0;
 let blockedUntil = parseInt(localStorage.getItem("blockedUntil")) || 0;
 
-// ===== 4 месяца =====
 function isValidMonth(codeMonth) {
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
@@ -65,27 +142,32 @@ function isValidMonth(codeMonth) {
   return false;
 }
 
+/* ✔ MODIFIED RULE */
 function isValidCode(code) {
   code = code.trim().toUpperCase();
-  const match = code.match(/^([A-Z0-9])([0-9]{2})Y([A-Z0-9]{2})5([A-Z0-9])$/);
+  const match = code.match(/^([A-Z0-9])([0-9]{2})Y([A-Z0-9]{2})([A-Z0-9])5$/);
   if (!match) return false;
   return isValidMonth(match[2]);
 }
 
+/* ========================= */
 function grantAccess(code) {
   document.getElementById("login").style.display = "none";
   document.getElementById("content").style.display = "block";
   renderPoints();
 
- // ===== THANK YOU BLOCK (ADDED) =====
+  if (isWeChat()) {
+    document.getElementById("autoBlock").style.display = "none";
+  }
+
   const thanks = document.createElement("div");
   thanks.style.marginTop = "40px";
   thanks.style.padding = "15px";
   thanks.style.fontSize = "15px";
   thanks.style.lineHeight = "1.8";
   thanks.style.color = "#333";
-  thanks.style.textAlign = "left";
   thanks.style.borderTop = "1px solid #eee";
+  thanks.style.textAlign = "left";
 
   thanks.innerHTML = `
     🙏✨ <b>感谢您的收听</b><br>
@@ -184,32 +266,15 @@ const pointsData = [
 登上渡轮时，你会带什么？⛴️🥖`,images:["images/15.jpg"],audio:"audio/15.mp3"}
 ];
 
-// ===== PRELOAD (ONLY ADDITION) =====
-pointsData.forEach(p => {
-  p.images.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
-
-  const audio = new Audio();
-  audio.src = p.audio;
-  audio.preload = "auto";
-});
-
-// ===== RENDER =====
+/* render */
 function renderPoints() {
   const container = document.getElementById("points");
   container.innerHTML = "";
 
-  pointsData.forEach((p, i) => {
-    container.appendChild(createPoint(p, i));
-  });
-}
-
-function createPoint(point, index) {
-  const div = document.createElement("div");
-  div.style.marginBottom = "35px";
-  div.style.textAlign = "left";
+  pointsData.forEach((p,i)=>{
+    const div = document.createElement("div");
+    div.style.marginBottom = "35px";
+    div.style.textAlign = "left";
 
   let html = `
     <div style="color:#000;font-size:15px;margin-bottom:4px;">
@@ -231,55 +296,44 @@ function createPoint(point, index) {
     </audio>
   `;
 
-  point.images.forEach(img => {
-    html += `
-      <img src="${img}" style="width:100%;margin:8px 0;border-radius:8px;cursor:zoom-in;">
-    `;
-  });
+    p.images.forEach(img=>{
+      html += `<img src="${img}" onclick="previewImage('${img}')"
+        style="width:100%;margin:6px 0;border-radius:8px;">`;
+    });
 
-  div.innerHTML = html;
-  return div;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
 }
 
-// ===== AUTOPLAY =====
+/* autoplay */
 function playAll() {
   const audios = document.querySelectorAll("audio");
   let i = 0;
-
   function next() {
     if (i >= audios.length) return;
     audios[i].play();
-    audios[i].onended = () => {
-      i++;
-      next();
-    };
+    audios[i].onended = () => { i++; next(); };
   }
-
   next();
 }
 
-// ===== INIT =====
+/* init */
 window.onload = function() {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const code = params.get("code");
-
-  if (code) {
-    document.getElementById("code").value = code;
-  }
+  if (code) document.getElementById("code").value = code;
 };
 
 </script>
 
 <hr>
 
-<div style="text-align:left;line-height:1.8;margin-top:30px;">
+<div style="text-align:left;">
   <p><b>合作</b></p>
   <p>
-    📧电子邮件：relaxtour.support@gmail.com<br>
-    💬微信：
-    <a href="weixin://dl/chat?artem0532" style="color:#1677ff;text-decoration:underline;">
-      artem0532
-    </a>
+    📧 电子邮件： relaxtour.support@gmail.com<br>
+    💬 微信： artem0532
   </p>
 </div>
 
