@@ -291,21 +291,7 @@ div.className = "audio-block";
     div.style.textAlign = "left";
 
     let html = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-  <div>📍 第${i+1}站</div>
-
-  ${i < pointsData.length - 1 ? `
-    <button onclick="openAmapWalk(
-      ${pointsData[i].lat},
-      ${pointsData[i].lng},
-      ${pointsData[i+1].lat},
-      ${pointsData[i+1].lng}
-    )"
-    style="padding:4px 8px;font-size:12px;border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:6px;">
-      导航
-    </button>
-  ` : ''}
-</div>
+     <div style="margin-bottom:4px;">📍 第${i+1}站</div>
 
       <div style="font-weight:bold;color:#1677ff;margin-bottom:8px;">
         ${p.text}
@@ -340,11 +326,6 @@ function playAll() {
     audios[i].onended = () => { i++; next(); };
   }
   next();
-}
-
-  function openAmapWalk(fromLat, fromLng, toLat, toLng) {
-  const url = `https://uri.amap.com/navigation?from=${fromLng},${fromLat}&to=${toLng},${toLat}&mode=walk&policy=1`;
-  window.location.href = url;
 }
 
 /* init */
