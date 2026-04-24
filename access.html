@@ -56,9 +56,7 @@ function isWeChat() {
   return /micromessenger/i.test(navigator.userAgent);
 }
 
-/* =========================
-   IMAGE ZOOM + DRAG
-========================= */
+/* IMAGE ZOOM + DRAG */
 function previewImage(src) {
   let overlay = document.createElement("div");
   overlay.style.position = "fixed";
@@ -124,9 +122,7 @@ function previewImage(src) {
   document.body.appendChild(overlay);
 }
 
-/* =========================
-   CODE CHECK (ONLY CHANGE HERE)
-========================= */
+/* CODE CHECK */
 let attempts = parseInt(localStorage.getItem("attempts")) || 0;
 let blockedUntil = parseInt(localStorage.getItem("blockedUntil")) || 0;
 
@@ -142,7 +138,6 @@ function isValidMonth(codeMonth) {
   return false;
 }
 
-/* ✔ MODIFIED RULE */
 function isValidCode(code) {
   code = code.trim().toUpperCase();
   const match = code.match(/^([A-Z0-9])([0-9]{2})Y([A-Z0-9]{2})([A-Z0-9])5$/);
@@ -150,7 +145,6 @@ function isValidCode(code) {
   return isValidMonth(match[2]);
 }
 
-/* ========================= */
 function grantAccess(code) {
   document.getElementById("login").style.display = "none";
   document.getElementById("content").style.display = "block";
@@ -266,7 +260,7 @@ const pointsData = [
 登上渡轮时，你会带什么？⛴️🥖`,images:["images/15.jpg"],audio:"audio/15.mp3"}
 ];
 
-/* render */
+/* RENDER (FIXED SPACING) */
 function renderPoints() {
   const container = document.getElementById("points");
   container.innerHTML = "";
@@ -276,29 +270,25 @@ function renderPoints() {
     div.style.marginBottom = "35px";
     div.style.textAlign = "left";
 
-  let html = `
-    <div style="color:#000;font-size:15px;margin-bottom:4px;">
-      📍 第${index + 1}站
-    </div>
+    let html = `
+      <div style="margin-bottom:4px;">📍 第${i+1}站</div>
 
-    <div style="color:#1677ff;font-size:20px;font-weight:bold;margin-bottom:8px;">
-      ${point.text}
-    </div>
+      <div style="font-weight:bold;color:#1677ff;margin-bottom:8px;">
+        ${p.text}
+      </div>
 
-    <div style="font-size:15px;line-height:1.7;color:#333;margin-bottom:12px;white-space:pre-line;">
-      ${point.description}
-    </div>
-  `;
+      <div style="line-height:1.7;margin-bottom:12px;">
+        ${p.description}
+      </div>
 
-  html += `
-    <audio controls style="width:100%;margin-bottom:12px;">
-      <source src="${point.audio}" type="audio/mpeg">
-    </audio>
-  `;
+      <audio controls style="width:100%;margin-bottom:12px;">
+        <source src="${p.audio}">
+      </audio>
+    `;
 
     p.images.forEach(img=>{
       html += `<img src="${img}" onclick="previewImage('${img}')"
-        style="width:100%;margin:6px 0;border-radius:8px;">`;
+        style="width:100%;margin:8px 0;border-radius:8px;">`;
     });
 
     div.innerHTML = html;
