@@ -169,7 +169,7 @@ function grantAccess(code) {
 
   thanks.innerHTML = `
     🙏✨ <b>感谢您的收听</b><br>
-    🎧 希望本次音频导览让您的旅程更加有趣与丰富 🌍✨<br>
+    🎧 希望本次音频导览让您的旅程更加有趣与丰富 🌍<br>
     📝 如果方便的话，欢迎您留下真实的评价<br>
     💬 这对我们非常重要，非常感谢您的支持 ❤️
   `;
@@ -271,6 +271,7 @@ function renderPoints() {
 
   pointsData.forEach((p,i)=>{
     const div = document.createElement("div");
+div.className = "audio-block";
     div.style.marginBottom = "35px";
     div.style.textAlign = "left";
 
@@ -319,7 +320,7 @@ window.onload = function() {
   if (code) document.getElementById("code").value = code;
 };
 
-  document.addEventListener("play", function(e) {
+ document.addEventListener("play", function(e) {
   const audios = document.querySelectorAll("audio");
 
   audios.forEach(a => {
@@ -327,6 +328,17 @@ window.onload = function() {
       a.pause();
     }
   });
+
+  // подсветка
+  document.querySelectorAll(".audio-block").forEach(block => {
+    block.classList.remove("active-audio");
+  });
+
+  const currentBlock = e.target.closest(".audio-block");
+  if (currentBlock) {
+    currentBlock.classList.add("active-audio");
+  }
+
 }, true);
 
 </script>
@@ -340,6 +352,15 @@ window.onload = function() {
     💬 微信： artem0532
   </p>
 </div>
+
+  <style>
+.active-audio {
+  background: #f2f7ff;
+  border-radius: 10px;
+  padding: 10px;
+  transition: 0.3s;
+}
+</style>
 
 </body>
 </html>
