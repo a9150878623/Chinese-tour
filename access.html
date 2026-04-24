@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
 <head>
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+
 <title>音频导览</title>
 </head>
 
@@ -314,6 +318,16 @@ window.onload = function() {
   const code = params.get("code");
   if (code) document.getElementById("code").value = code;
 };
+
+  document.addEventListener("play", function(e) {
+  const audios = document.querySelectorAll("audio");
+
+  audios.forEach(a => {
+    if (a !== e.target) {
+      a.pause();
+    }
+  });
+}, true);
 
 </script>
 
