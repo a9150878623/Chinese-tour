@@ -346,30 +346,27 @@ function playAll() {
 
 function openAmapWalk(toLat, toLng, name = "终点", surl) {
 
-  // 1. APP через координаты
   const appUrl =
     `amapuri://route/plan/?sourceApplication=audioGuide` +
     `&dlat=${toLat}&dlon=${toLng}` +
     `&dname=${encodeURIComponent(name)}` +
     `&dev=0&t=2`;
 
-  let opened = false;
-
-  // пробуем открыть app
+  // 1. всегда сначала app intent
   window.location.href = appUrl;
 
-  // 2. fallback → индивидуальный SURL точки
+  // 2. fallback НЕ в AMap navigation (это ломает маршрут!)
   setTimeout(() => {
     if (!document.hidden) {
       if (surl) {
-        window.location.href = surl;
+        window.location.href = surl; // просто карточка точки, НЕ навигация
       }
     }
   }, 1200);
 
-  // 3. WeChat hint
+  // 3. инструкция
   setTimeout(() => {
-    alert("如未自动打开App，请点击右上角···选择在浏览器打开，然后打开高德地图");
+    alert("如未自动打开高德地图App，请直接重新点击导航按钮");
   }, 1500);
 }
 
