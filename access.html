@@ -295,12 +295,8 @@ div.className = "audio-block";
   <div>📍 第${i+1}站</div>
 
   ${i < pointsData.length - 1 ? `
-    <button onclick="openAmapWalk(
-      ${pointsData[i].lat},
-      ${pointsData[i].lng},
-      ${pointsData[i+1].lat},
-      ${pointsData[i+1].lng}
-    )"
+    <button onclick="openAmapWalk(${pointsData[i+1].lat}, ${pointsData[i+1].lng})"
+    
     style="padding:4px 8px;font-size:12px;border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:6px;">
       导航
     </button>
@@ -342,9 +338,22 @@ function playAll() {
   next();
 }
 
-  function openAmapWalk(fromLat, fromLng, toLat, toLng) {
-  const url = `https://uri.amap.com/navigation?from=${fromLng},${fromLat}&to=${toLng},${toLat}&mode=walk&policy=1`;
-  window.location.href = url;
+  function openAmapWalk(toLat, toLng) {
+
+  const appUrl = `amapuri://route/plan/?sourceApplication=audioGuide&dlat=${toLat}&dlon=${toLng}&dname=终点&dev=0&t=2`;
+
+  const webUrl = `https://uri.amap.com/navigation?to=${toLng},${toLat},终点&mode=walk`;
+
+  // НЕ закрывает WeChat
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = appUrl;
+  document.body.appendChild(iframe);
+
+  // fallback если нет приложения
+  setTimeout(() => {
+    window.open(webUrl);
+  }, 1200);
 }
 
 /* init */
