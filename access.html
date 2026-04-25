@@ -295,7 +295,7 @@ div.className = "audio-block";
   <div>📍 第${i+1}站</div>
 
 ${i < pointsData.length - 1 ? `
-  <button onclick="openAmapWalk(${p.lat}, ${p.lng}, '${p.text}')"
+  <button onclick="openAmapWalk(${p.lat}, ${p.lng}, '${p.text}', '${p.amap}')"
     style="
       padding:4px 8px;
       font-size:12px;
@@ -344,24 +344,26 @@ function playAll() {
   next();
 }
 
-function openAmapWalk(toLat, toLng, name = "终点") {
+function openAmapWalk(toLat, toLng, name = "终点", surl) {
 
+  // 1. APP через координаты
   const appUrl =
     `amapuri://route/plan/?sourceApplication=audioGuide` +
     `&dlat=${toLat}&dlon=${toLng}` +
     `&dname=${encodeURIComponent(name)}` +
     `&dev=0&t=2`;
 
-  const webUrl =
-    `https://surl.amap.com/link?lat=${toLat}&lon=${toLng}&name=${encodeURIComponent(name)}`;
+  let opened = false;
 
-  // 1. пробуем app
+  // пробуем открыть app
   window.location.href = appUrl;
 
-  // 2. fallback → web
+  // 2. fallback → индивидуальный SURL точки
   setTimeout(() => {
     if (!document.hidden) {
-      window.location.href = webUrl;
+      if (surl) {
+        window.location.href = surl;
+      }
     }
   }, 1200);
 
