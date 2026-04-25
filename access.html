@@ -55,7 +55,16 @@
 </div>
 
 <script>
+let appOpened = false;
+let appAttemptTime = 0;
 
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    appOpened = true;
+    saveScroll();
+  }
+});
+  
 function isWeChat() {
   return /micromessenger/i.test(navigator.userAgent);
 }
@@ -361,22 +370,26 @@ function openAmapWalk(toLat, toLng, name = "终点", surl) {
     `&dev=0&t=2`;
 
   // ✔️ правильный способ для WeChat
-  window.location.href = appUrl;
+appOpened = false;
+appAttemptTime = Date.now();
 
-  setTimeout(() => {
+window.location.href = appUrl;
 
-    if (!document.hidden && surl) {
+setTimeout(() => {
+  const timePassed = Date.now() - appAttemptTime;
 
-      if (isWeChat()) {
-        window.location.href = surl;
-      } else {
-        window.open(surl, "_blank");
-      }
+  // если пользователь остался в странице → значит app не открылся
+  if (!appOpened && timePassed > 700 && surl) {
 
+    if (isWeChat()) {
+      window.location.href = surl;
+    } else {
+      window.open(surl, "_blank");
     }
 
-  }, 1200);
-}
+  }
+}, 900);
+  }
 
 /* init */
 window.onload = function () {
@@ -437,9 +450,6 @@ window.onload = function () {
 
 window.addEventListener("beforeunload", saveScroll);
 window.addEventListener("pagehide", saveScroll);
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") saveScroll();
-});
 
 </script>
 
