@@ -150,6 +150,7 @@ function isValidCode(code) {
 }
 
 function grantAccess(code) {
+  localStorage.setItem("savedCode", code);
   document.getElementById("login").style.display = "none";
   document.getElementById("content").style.display = "block";
   renderPoints();
@@ -337,14 +338,12 @@ function playAll() {
   next();
 }
 
- function openAmapWalk(toLat, toLng) {
+function openAmapWalk(toLat, toLng) {
 
-  const webUrl = `https://uri.amap.com/navigation?to=${toLng},${toLat},终点&mode=walk`;
+  const webUrl = `https://uri.amap.com/navigation?to=${toLng},${toLat}&mode=walk&policy=1&src=yourApp`;
 
-  // открываем внутри WeChat
   window.location.href = webUrl;
 
-  // подсказка пользователю
   setTimeout(() => {
     alert("如未自动打开App，请点击右上角···在浏览器打开，然后点击 打开高德地图");
   }, 1500);
@@ -354,7 +353,16 @@ function playAll() {
 window.onload = function() {
   const params = new URLSearchParams(location.search);
   const code = params.get("code");
-  if (code) document.getElementById("code").value = code;
+
+  if (code) {
+    document.getElementById("code").value = code;
+  }
+
+  // 🔥 восстановление после возврата
+  const saved = localStorage.getItem("savedCode");
+  if (saved && isValidCode(saved)) {
+    grantAccess(saved);
+  }
 };
 
  document.addEventListener("play", function(e) {
