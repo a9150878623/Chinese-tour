@@ -214,7 +214,7 @@ function checkCode() {
 
 // ===== DATA =====
 const pointsData = [
-  {text:"市集广场",lat: 60.1677050,lng: 24.9531624,description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
+  {text:"市集广场",lat: 60.167694,lng: 24.953313,description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
 留心看看——你能猜到吗？🧭`,images:["images/1.jpg"],audio:"audio/1.mp3"},
 
   {text:"渡轮前往要塞",lat: 0,
@@ -340,7 +340,7 @@ function playAll() {
 
 function openAmapWalk(toLat, toLng) {
 
-  const webUrl = `https://uri.amap.com/navigation?to=${toLng},${toLat}&mode=walk&policy=1&src=yourApp`;
+  const webUrl = `https://uri.amap.com/route/plan/?did=BGVIS1&dlat=${toLat}&dlon=${toLng}&dname=终点&dev=0&t=2`;
 
   window.location.href = webUrl;
 
