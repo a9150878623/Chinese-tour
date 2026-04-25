@@ -353,6 +353,7 @@ function playAll() {
 
 function openAmapWalk(toLat, toLng, name = "终点", surl) {
 
+  alert("如未自动打开高德地图App，请重新点击导航按钮");
   const appUrl =
     `amapuri://route/plan/?sourceApplication=audioGuide` +
     `&dlat=${toLat}&dlon=${toLng}` +
@@ -375,10 +376,6 @@ function openAmapWalk(toLat, toLng, name = "终点", surl) {
     }
 
   }, 1200);
-
-  setTimeout(() => {
-    alert("如未自动打开高德地图App，请重新点击导航按钮");
-  }, 1500);
 }
 
 /* init */
