@@ -213,8 +213,7 @@ function checkCode() {
 
 // ===== DATA =====
 const pointsData = [
-  {text:"市集广场",lat: 60.1677050,
-  lng: 24.9531624,description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
+  {text:"市集广场",lat: 60.1677050,lng: 24.9531624,description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
 留心看看——你能猜到吗？🧭`,images:["images/1.jpg"],audio:"audio/1.mp3"},
 
   {text:"渡轮前往要塞",lat: 0,
@@ -338,22 +337,17 @@ function playAll() {
   next();
 }
 
-  function openAmapWalk(toLat, toLng) {
-
-  const appUrl = `amapuri://route/plan/?sourceApplication=audioGuide&dlat=${toLat}&dlon=${toLng}&dname=终点&dev=0&t=2`;
+ function openAmapWalk(toLat, toLng) {
 
   const webUrl = `https://uri.amap.com/navigation?to=${toLng},${toLat},终点&mode=walk`;
 
-  // НЕ закрывает WeChat
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = appUrl;
-  document.body.appendChild(iframe);
+  // открываем внутри WeChat
+  window.location.href = webUrl;
 
-  // fallback если нет приложения
+  // подсказка пользователю
   setTimeout(() => {
-    window.open(webUrl);
-  }, 1200);
+    alert("如未自动打开App，请点击右上角···在浏览器打开，然后点击 打开高德地图");
+  }, 1500);
 }
 
 /* init */
