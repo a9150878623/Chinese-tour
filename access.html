@@ -340,12 +340,13 @@ function playAll() {
 
 function openAmapWalk(toLat, toLng) {
 
-  const webUrl = `https://uri.amap.com/route/plan/?did=BGVIS1&dlat=${toLat}&dlon=${toLng}&dname=终点&dev=0&t=2`;
+  const webUrl =
+    `https://uri.amap.com/navigation?to=${toLng},${toLat},终点&mode=walk&policy=1&src=audioGuide`;
 
   window.location.href = webUrl;
 
   setTimeout(() => {
-    alert("如未自动打开App，请点击右上角···在浏览器打开，然后点击 打开高德地图");
+    alert("如未自动打开App，请点击右上角···在浏览器打开，然后选择 打开高德地图");
   }, 1500);
 }
 
