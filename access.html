@@ -295,7 +295,7 @@ div.className = "audio-block";
   <div>📍 第${i+1}站</div>
 
 ${i < pointsData.length - 1 ? `
-  <button onclick="openAmapWalk('${p.amap}')"
+  <button onclick="openAmapWalk(${p.lat}, ${p.lng}, '${p.text}')"
     style="
       padding:4px 8px;
       font-size:12px;
@@ -344,16 +344,31 @@ function playAll() {
   next();
 }
 
-function openAmapWalk(url) {
-  if (!url) return;
+function openAmapWalk(toLat, toLng, name = "终点") {
 
-  // открываем AMap ссылку (surl / poi / navigation link)
-  window.location.href = url;
+  const appUrl =
+    `amapuri://route/plan/?sourceApplication=audioGuide` +
+    `&dlat=${toLat}&dlon=${toLng}` +
+    `&dname=${encodeURIComponent(name)}` +
+    `&dev=0&t=2`;
 
-  // fallback через alert (WeChat-friendly)
+  const webUrl =
+    `https://surl.amap.com/link?lat=${toLat}&lon=${toLng}&name=${encodeURIComponent(name)}`;
+
+  // 1. пробуем app
+  window.location.href = appUrl;
+
+  // 2. fallback → web
   setTimeout(() => {
-    alert("如未自动打开App，请点击右上角···选择在浏览器打开");
+    if (!document.hidden) {
+      window.location.href = webUrl;
+    }
   }, 1200);
+
+  // 3. WeChat hint
+  setTimeout(() => {
+    alert("如未自动打开App，请点击右上角···选择在浏览器打开，然后打开高德地图");
+  }, 1500);
 }
 
 /* init */
