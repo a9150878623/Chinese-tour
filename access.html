@@ -214,7 +214,7 @@ function checkCode() {
 
 // ===== DATA =====
 const pointsData = [
-  {text:"市集广场",lat: 60.167694,lng: 24.953313,description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
+  {text:"市集广场",lat: 60.167694,lng: 24.953313,amap: "https://surl.amap.com/lmsfFMO1xgrB",description:`这里曾经是一片浅湾，如今——摊位的喧闹声与胆大的海鸥🦅。是谁在高处守护这片广场？又是哪一处低调的门面藏着那条最“谦逊”的地址？
 留心看看——你能猜到吗？🧭`,images:["images/1.jpg"],audio:"audio/1.mp3"},
 
   {text:"渡轮前往要塞",lat: 0,
@@ -294,13 +294,19 @@ div.className = "audio-block";
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
   <div>📍 第${i+1}站</div>
 
-  ${i < pointsData.length - 1 ? `
-    <button onclick="openAmapWalk(${pointsData[i+1].lat}, ${pointsData[i+1].lng})"
-    
-    style="padding:4px 8px;font-size:12px;border:1px solid #1677ff;background:#fff;color:#1677ff;border-radius:6px;">
-      导航
-    </button>
-  ` : ''}
+${i < pointsData.length - 1 ? `
+  <button onclick="openAmapWalk('${p.amap}')"
+    style="
+      padding:4px 8px;
+      font-size:12px;
+      border:1px solid #1677ff;
+      background:#fff;
+      color:#1677ff;
+      border-radius:6px;
+    ">
+    导航
+  </button>
+` : ''}
 </div>
 
       <div style="font-weight:bold;color:#1677ff;margin-bottom:8px;">
@@ -338,16 +344,16 @@ function playAll() {
   next();
 }
 
-function openAmapWalk(toLat, toLng) {
+function openAmapWalk(url) {
+  if (!url) return;
 
-  const webUrl =
-    `https://uri.amap.com/navigation?to=${toLng},${toLat},终点&mode=walk&policy=1&src=audioGuide`;
+  // открываем AMap ссылку (surl / poi / navigation link)
+  window.location.href = url;
 
-  window.location.href = webUrl;
-
+  // fallback через alert (WeChat-friendly)
   setTimeout(() => {
-    alert("如未自动打开App，请点击右上角···在浏览器打开，然后选择 打开高德地图");
-  }, 1500);
+    alert("如未自动打开App，请点击右上角···选择在浏览器打开");
+  }, 1200);
 }
 
 /* init */
@@ -355,14 +361,13 @@ window.onload = function() {
   const params = new URLSearchParams(location.search);
   const code = params.get("code");
 
-  if (code) {
-    document.getElementById("code").value = code;
-  }
-
-  // 🔥 восстановление после возврата
   const saved = localStorage.getItem("savedCode");
-  if (saved && isValidCode(saved)) {
-    grantAccess(saved);
+
+  const finalCode = code || saved;
+
+  if (finalCode && isValidCode(finalCode)) {
+    document.getElementById("code").value = finalCode;
+    grantAccess(finalCode);
   }
 };
 
