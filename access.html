@@ -34,12 +34,32 @@
 
 <div id="content" style="display:none;">
 
+  <div style="text-align:left;margin-bottom:10px;">
+    <a href="index.html">
+      <button style="padding:8px 14px;font-size:13px;color:#333;">
+        ← 返回购买页面
+      </button>
+    </a>
+  </div>
+
   <h2>🎧 音频导览</h2>
 
   <img src="images/map.jpg"
        onclick="previewImage('images/map.jpg')"
        style="width:100%;border-radius:10px;margin-bottom:20px;" />
 
+  <div id="wechatTip" style="display:none;margin-bottom:20px;text-align:left;">
+  <p>
+    您可以单独播放每个讲解点的音频，<br>
+    或点击下方按钮收听完整音频版本。
+  </p>
+
+  <button onclick="playFullAudio()" 
+    style="margin-top:10px;padding:12px 18px;font-size:15px;">
+    ▶ 播放完整音频
+  </button>
+</div>
+  
   <div id="autoBlock">
     <p style="text-align:left;">
       您可以手动播放每个讲解点的音频，<br>
@@ -64,6 +84,11 @@ document.addEventListener("visibilitychange", () => {
     saveScroll();
   }
 });
+
+  function playFullAudio() {
+  const audio = new Audio("audio/wechatfull.mp3"); // вставишь свой файл
+  audio.play();
+}
   
 function isWeChat() {
   return /micromessenger/i.test(navigator.userAgent);
@@ -172,8 +197,9 @@ if (savedScroll) {
 }
 
   if (isWeChat()) {
-    document.getElementById("autoBlock").style.display = "none";
-  }
+  document.getElementById("autoBlock").style.display = "none";
+  document.getElementById("wechatTip").style.display = "block";
+}
 
   const thanks = document.createElement("div");
   thanks.style.marginTop = "40px";
@@ -310,7 +336,7 @@ div.className = "audio-block";
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
   <div>📍 第${i+1}站</div>
 
-${i < pointsData.length - 1 ? `
+${p.amap ? `
   <button onclick="openAmapWalk(${p.lat}, ${p.lng}, '${p.text}', '${p.amap}')"
     style="
       padding:5px 10px;
