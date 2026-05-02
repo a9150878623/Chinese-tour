@@ -82,7 +82,7 @@
 </p>
    </div>
 
-<button onclick="openForm()" style="padding:14px 24px;font-size:16px;">
+<button id="openFormBtn" onclick="openForm()" style="padding:14px 24px;font-size:16px;">
 我已支付，点击获取访问代码
 </button>
 
@@ -407,16 +407,18 @@ if (mode === "contract") {
     if (step3) step3.style.display = "none";
 
     // текст кнопки
-    const btn = document.getElementById("genBtn");
-    if (btn) btn.innerText = "步骤1：我已通过合作方购买音频导览，申请获取访问代码";
-
-    const input = document.getElementById("wechat");
-    if (input) input.placeholder = "合同编号";
-
-    const title = document.getElementById("inputTitle");
-    if (title) title.innerText = "请输入合作方合同编号👇";
+   const openBtn = document.getElementById("openFormBtn");
+  if (openBtn) {
+    openBtn.innerText =
+      "步骤1：我已通过合作方购买音频导览，申请获取访问代码";
   }
-};
+
+  const input = document.getElementById("wechat");
+  if (input) input.placeholder = "合同编号";
+
+  const title = document.getElementById("inputTitle");
+  if (title) title.innerText = "请输入合作方合同编号👇";
+}
  
 </script>
 
