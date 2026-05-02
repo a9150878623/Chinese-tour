@@ -75,6 +75,53 @@
 </div>
 
 <script>
+  const AudioManager = {
+  current: null,
+  autoplayIndex: 0,
+  autoplayList: [],
+
+  stop() {
+    if (this.current) {
+      this.current.pause();
+      this.current.currentTime = 0;
+      this.current = null;
+    }
+  },
+
+  play(audioEl) {
+    this.stop();
+    this.current = audioEl;
+    audioEl.play();
+  },
+
+  playUrl(url) {
+    this.stop();
+    this.current = new Audio(url);
+    this.current.play();
+  },
+
+  playAll(list) {
+    this.stop();
+    this.autoplayList = list;
+    this.autoplayIndex = 0;
+    this._next();
+  },
+
+  _next() {
+    if (this.autoplayIndex >= this.autoplayList.length) return;
+
+    const audio = this.autoplayList[this.autoplayIndex];
+    this.current = audio;
+
+    audio.play();
+
+    audio.onended = () => {
+      this.autoplayIndex++;
+      this._next();
+    };
+  }
+};
+  
 let appOpened = false;
 let appAttemptTime = 0;
 
@@ -85,9 +132,8 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
-  function playFullAudio() {
-  const audio = new Audio("audio/wechatfull.mp3"); // вставишь свой файл
-  audio.play();
+ function playFullAudio() {
+  AudioManager.playUrl("audio/wechatfull.mp3");
 }
   
 function isWeChat() {
@@ -359,7 +405,7 @@ ${p.amap ? `
         ${p.description}
       </div>
 
-      <audio controls style="width:100%;margin-bottom:12px;">
+      <audio controls onplay="AudioManager.play(this)" style="width:100%;margin-bottom:12px;">
         <source src="${p.audio}">
       </audio>
     `;
@@ -376,7 +422,9 @@ ${p.amap ? `
 
 /* autoplay */
 function playAll() {
-  const audios = document.querySelectorAll("audio");
+  const audios = Array.from(document.querySelectorAll("audio"));
+  AudioManager.playAll(audios);
+}
   let i = 0;
   function next() {
     if (i >= audios.length) return;
@@ -384,7 +432,6 @@ function playAll() {
     audios[i].onended = () => { i++; next(); };
   }
   next();
-}
 
 function openAmapWalk(toLat, toLng, name = "终点", surl) {
 
@@ -447,7 +494,7 @@ window.onload = function () {
   }
 };
 
- document.addEventListener("play", function(e) {
+document.addEventListener("play", function(e) {
   const audios = document.querySelectorAll("audio");
 
   audios.forEach(a => {
@@ -455,6 +502,9 @@ window.onload = function () {
       a.pause();
     }
   });
+
+  AudioManager.current = e.target;
+}, true);
 
    
 
