@@ -199,7 +199,64 @@ if (refParam && REF_WHITELIST.includes(refParam)) {
   return "paid";
 }
 
-  const MODE = getMode();
+    const MODE = getMode();
+
+  function applyModeUI(mode) {
+
+  if (mode === "contract") {
+
+    const buyTitle = document.getElementById("buyTitle");
+    if (buyTitle) buyTitle.style.display = "none";
+
+    const step1 = document.getElementById("step1Block");
+    if (step1) step1.style.display = "none";
+
+    const step2 = document.getElementById("step2Text");
+    if (step2) step2.style.display = "none";
+
+    const step3 = document.getElementById("step3Title");
+    if (step3) step3.style.display = "none";
+
+    const openBtn = document.getElementById("openFormBtn");
+    if (openBtn) {
+      openBtn.innerText =
+        "步骤1：我已通过合作方购买音频导览，申请获取访问代码";
+    }
+
+    const input = document.getElementById("wechat");
+    if (input) input.placeholder = "合同编号";
+
+    const title = document.getElementById("inputTitle");
+    if (title) title.innerText = "请输入合作方合同编号👇";
+  }
+
+  else {
+
+    const buyTitle = document.getElementById("buyTitle");
+    if (buyTitle) buyTitle.style.display = "block";
+
+    const step1 = document.getElementById("step1Block");
+    if (step1) step1.style.display = "block";
+
+    const step2 = document.getElementById("step2Text");
+    if (step2) step2.style.display = "block";
+
+    const step3 = document.getElementById("step3Title");
+    if (step3) step3.style.display = "block";
+
+    const openBtn = document.getElementById("openFormBtn");
+    if (openBtn) {
+      openBtn.innerText =
+        "我已支付，点击获取访问代码";
+    }
+
+    const input = document.getElementById("wechat");
+    if (input) input.placeholder = "WeChat ID";
+
+    const title = document.getElementById("inputTitle");
+    if (title) title.innerText = "请输入您的微信 ID";
+  }
+}
 
 function isWeChat() {
   return /micromessenger/i.test(navigator.userAgent);
