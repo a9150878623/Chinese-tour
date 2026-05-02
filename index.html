@@ -393,10 +393,29 @@ window.onload = function() {
   }
 
 if (mode === "contract") {
-  document.getElementById("inputTitle").innerText = "请输入合作方合同编号";
-  document.getElementById("wechat").placeholder = "合同编号";
-  document.getElementById("genBtn").innerText = "通过合同获取访问代码";
-}
+
+    const buyTitle = document.getElementById("buyTitle");
+    if (buyTitle) buyTitle.style.display = "none";
+
+    const step1 = document.getElementById("step1Block");
+    if (step1) step1.style.display = "none";
+
+    const step2 = document.getElementById("step2Text");
+    if (step2) step2.style.display = "none";
+
+    const step3 = document.getElementById("step3Title");
+    if (step3) step3.style.display = "none";
+
+    // текст кнопки
+    const btn = document.getElementById("genBtn");
+    if (btn) btn.innerText = "我已通过合作方购买，获取访问代码";
+
+    const input = document.getElementById("wechat");
+    if (input) input.placeholder = "请输入合同编号";
+
+    const title = document.getElementById("inputTitle");
+    if (title) title.innerText = "请输入合作方合同编号";
+  }
 };
  
 </script>
