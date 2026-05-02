@@ -171,28 +171,34 @@ function getMode() {
   const params = new URLSearchParams(window.location.search);
 
   const contractParam = params.get("contract");
-const refParam = params.get("ref");
+  const refParam = params.get("ref");
 
-// сохраняем ВСЕГДА (даже если невалидные)
-if (contractParam) {
-  localStorage.setItem("contract_param", contractParam);
-}
+  if (contractParam) {
+    localStorage.setItem("contract_param", contractParam);
+  }
 
-if (refParam) {
-  localStorage.setItem("ref_param", refParam);
-}
-  
+  if (refParam) {
+    localStorage.setItem("ref_param", refParam);
+  }
+
   if (contractParam && CONTRACT_WHITELIST.includes(contractParam)) {
-  localStorage.setItem("mode", "contract");
-  return "contract";
-}
+    localStorage.setItem("mode", "contract");
 
-if (refParam && REF_WHITELIST.includes(refParam)) {
-  localStorage.setItem("mode", "paid");
-  return "paid";
-}
+    // 🧹 очистка URL
+    history.replaceState({}, document.title, window.location.pathname);
 
-  // ✅ если нет параметров — берём сохранённый режим
+    return "contract";
+  }
+
+  if (refParam && REF_WHITELIST.includes(refParam)) {
+    localStorage.setItem("mode", "paid");
+
+    // 🧹 очистка URL
+    history.replaceState({}, document.title, window.location.pathname);
+
+    return "paid";
+  }
+
   const saved = localStorage.getItem("mode");
   if (saved) return saved;
 
