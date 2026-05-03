@@ -60,70 +60,29 @@
   </button>
 </div>
   
-  <div id="autoBlock">
-    <p style="text-align:left;">
-      您可以手动播放每个讲解点的音频，<br>
-      或者点击下方按钮自动连续播放所有音频。
-    </p>
+<div id="autoBlock">
+  <p style="text-align:left;">
+    您可以播放全部音频（自动顺序播放）
+  </p>
 
-    <button onclick="playAll()" style="margin:15px auto;padding:14px 22px;font-size:16px;display:block;">
-      ▶ 自动播放全部音频
-    </button>
-  </div>
+  <audio id="mainAudio" controls style="width:100%;margin:10px 0;"></audio>
+</div>
 
   <div id="points"></div>
 </div>
 
 <script>
-  const AudioManager = {
-  current: null,
-  autoplayIndex: 0,
-  autoplayList: [],
-
-  stop() {
-    if (this.current) {
-      this.current.pause();
-      this.current.currentTime = 0;
-      this.current = null;
-    }
-  },
-
-  play(audioEl) {
-    this.stop();
-    this.current = audioEl;
-    audioEl.play();
-  },
-
-  playUrl(url) {
-    this.stop();
-    this.current = new Audio(url);
-    this.current.play();
-  },
-
-  playAll(list) {
-    this.stop();
-    this.autoplayList = list;
-    this.autoplayIndex = 0;
-    this._next();
-  },
-
-  _next() {
-    if (this.autoplayIndex >= this.autoplayList.length) return;
-
-    const audio = this.autoplayList[this.autoplayIndex];
-    this.current = audio;
-
-    audio.play();
-
-    audio.onended = () => {
-      this.autoplayIndex++;
-      this._next();
-    };
-  }
-};
-  
 let appOpened = false;
 let appAttemptTime = 0;
+  let playlist = [];
+let currentIndex = 0;
+let mainAudio = null;
+let isPlayingAll = false;
+
+function initPlaylist() {
+  playlist = Array.from(document.querySelectorAll(".audio-block audio"));
+  mainAudio = document.getElementById("mainAudio");
+}
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
@@ -132,8 +91,65 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
- function playFullAudio() {
-  AudioManager.playUrl("audio/wechatfull.mp3");
+  function playFullAudio() {
+  const audio = new Audio("audio/wechatfull.mp3"); // вставишь свой файл
+  audio.play();
+}
+  
+  function playNextFromMain() {
+  if (currentIndex >= playlist.length) {
+    isPlayingAll = false;
+    return;
+  }
+
+const audioEl = playlist[currentIndex];
+
+const source = audioEl.querySelector("source");
+
+if (source && source.src) {
+  mainAudio.src = source.src;
+}
+
+highlight(audioEl);
+
+  mainAudio.play();
+
+  isPlayingAll = true;
+
+mainAudio.onended = () => {
+  currentIndex++;
+  playNextFromMain();
+};
+  }
+
+function attachMainPlayerLogic() {
+  if (!mainAudio || mainAudio.dataset.bound) return;
+
+  mainAudio.dataset.bound = "1";
+
+ mainAudio.addEventListener("play", () => {
+  if (!isPlayingAll) {
+    playNextFromMain();
+  }
+});
+
+mainAudio.addEventListener("pause", () => {
+  isPlayingAll = false;
+});
+
+  mainAudio.addEventListener("ended", () => {
+    isPlayingAll = false;
+    currentIndex = 0;
+  });
+}
+
+  function highlight(audio) {
+  document.querySelectorAll(".audio-block").forEach(b => {
+    b.classList.remove("active-audio");
+  });
+
+  const block = audio.closest(".audio-block");
+  if (block) block.classList.add("active-audio");
 }
   
 function isWeChat() {
@@ -190,7 +206,9 @@ function previewImage(src) {
     if (e.touches.length === 2) {
       e.preventDefault();
       let d = dist(e.touches);
-      scale *= d / startDist;
+     if (startDist > 0) {
+  scale *= d / startDist;
+}
       scale = Math.max(1, Math.min(scale, 4));
       startDist = d;
     } else if (scale > 1) {
@@ -233,7 +251,12 @@ function grantAccess(code) {
   localStorage.setItem("savedCode", code);
   document.getElementById("login").style.display = "none";
   document.getElementById("content").style.display = "block";
-  renderPoints();
+renderPoints();
+
+requestAnimationFrame(() => {
+  initPlaylist();
+  attachMainPlayerLogic();
+});
 
   const savedScroll = localStorage.getItem("scrollY");
 if (savedScroll) {
@@ -405,7 +428,7 @@ ${p.amap ? `
         ${p.description}
       </div>
 
-      <audio controls onplay="AudioManager.play(this)" style="width:100%;margin-bottom:12px;">
+      <audio controls style="width:100%;margin-bottom:12px;">
         <source src="${p.audio}">
       </audio>
     `;
@@ -419,19 +442,6 @@ ${p.amap ? `
     container.appendChild(div);
   });
 }
-
-/* autoplay */
-function playAll() {
-  const audios = Array.from(document.querySelectorAll("audio"));
-  AudioManager.playAll(audios);
-}
-  let i = 0;
-  function next() {
-    if (i >= audios.length) return;
-    audios[i].play();
-    audios[i].onended = () => { i++; next(); };
-  }
-  next();
 
 function openAmapWalk(toLat, toLng, name = "终点", surl) {
 
@@ -494,7 +504,8 @@ window.onload = function () {
   }
 };
 
-document.addEventListener("play", function(e) {
+ document.addEventListener("play", function(e) {
+   if (e.target.id === "mainAudio") return;
   const audios = document.querySelectorAll("audio");
 
   audios.forEach(a => {
@@ -502,9 +513,6 @@ document.addEventListener("play", function(e) {
       a.pause();
     }
   });
-
-  AudioManager.current = e.target;
-}, true);
 
    
 
