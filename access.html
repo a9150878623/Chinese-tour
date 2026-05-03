@@ -125,9 +125,13 @@ document.addEventListener("visibilitychange", () => {
 
   isPlayingAll = true;
 
-  mainAudio.play().catch(err => {
-    console.log("Autoplay blocked or error:", err);
-  });
+ const playPromise = mainAudio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(err => {
+      console.log("Play blocked:", err);
+    });
+  }
 }
 
 // один раз навешиваем события
