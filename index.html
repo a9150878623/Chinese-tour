@@ -369,27 +369,37 @@ function sharePage() {
   }
 }
 
-/* ===== ОСТАЛЬНОЕ БЕЗ ИЗМЕНЕНИЙ ===== */
-
 function randomChar() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   return chars[Math.floor(Math.random() * chars.length)];
 }
 
-function getMonthCode() {
-  return String(new Date().getMonth() + 1).padStart(2, "0");
+function getDateParts() {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return { month, day };
+}
+
+const SECRET_KEY = "TM3";
+
+function makeSignature(base) {
+  return btoa(base + SECRET_KEY).replace(/[^A-Z0-9]/gi, "").slice(0, 3).toUpperCase();
 }
 
 function generateCode() {
-  return (
-    randomChar() +
-    getMonthCode() +
-    "Y" +
-    randomChar() +
-    randomChar() +
-    randomChar() +
-    "5"
-  );
+  const { month, day } = getDateParts();
+
+  let randomPart = "";
+  for (let i = 0; i < 5; i++) {
+    randomPart += randomChar();
+  }
+
+  const base = "5" + month + day + randomPart;
+
+  const signature = makeSignature(base);
+
+  return base + signature;
 }
 
 function openForm() {
