@@ -96,53 +96,51 @@ document.addEventListener("visibilitychange", () => {
   audio.play();
 }
   
-  function playNextFromMain() {
+ function playNextFromMain() {
   if (currentIndex >= playlist.length) {
     isPlayingAll = false;
+    currentIndex = 0;
     return;
   }
 
-const audioEl = playlist[currentIndex];
+  const audioEl = playlist[currentIndex];
+  const source = audioEl.querySelector("source");
 
-const source = audioEl.querySelector("source");
+  if (!source || !source.src) return;
 
-if (source && source.src) {
   mainAudio.src = source.src;
-}
-
-highlight(audioEl);
-
-  mainAudio.play();
+  highlight(audioEl);
 
   isPlayingAll = true;
 
-mainAudio.onended = () => {
-  currentIndex++;
-  playNextFromMain();
-};
-  }
+  mainAudio.play().catch(err => {
+    console.log("Autoplay blocked or error:", err);
+  });
+}
 
+// один раз навешиваем события
 function attachMainPlayerLogic() {
   if (!mainAudio || mainAudio.dataset.bound) return;
 
   mainAudio.dataset.bound = "1";
 
- mainAudio.addEventListener("play", () => {
-  if (!isPlayingAll) {
-    playNextFromMain();
-  }
-});
-
-mainAudio.addEventListener("pause", () => {
-  isPlayingAll = false;
-});
+  // старт ТОЛЬКО по нажатию Play
+  mainAudio.addEventListener("play", () => {
+    if (currentIndex === 0) {
+      playNextFromMain();
+    }
+  });
 
   mainAudio.addEventListener("ended", () => {
+    currentIndex++;
+    playNextFromMain();
+  });
+
+  mainAudio.addEventListener("pause", () => {
     isPlayingAll = false;
-    currentIndex = 0;
   });
 }
-
+  
   function highlight(audio) {
   document.querySelectorAll(".audio-block").forEach(b => {
     b.classList.remove("active-audio");
