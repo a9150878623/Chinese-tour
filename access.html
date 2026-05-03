@@ -49,15 +49,14 @@
        style="width:100%;border-radius:10px;margin-bottom:20px;" />
 
   <div id="wechatTip" style="display:none;margin-bottom:20px;text-align:left;">
-  <p>
-    您可以单独播放每个讲解点的音频，<br>
-    或点击下方按钮收听完整音频版本。
-  </p>
+ <p>
+  您可以单独播放每个讲解点的音频，<br>
+  或收听完整导览 👇
+</p>
 
-  <button onclick="playFullAudio()" 
-    style="margin-top:10px;padding:12px 18px;font-size:15px;">
-    ▶ 播放完整音频
-  </button>
+<audio id="wechatAudio" controls style="width:100%;margin-top:10px;">
+  <source src="audio/wechatfull.mp3" type="audio/mpeg">
+</audio>
 </div>
   
 <div id="autoBlock">
@@ -78,6 +77,8 @@ let appAttemptTime = 0;
 let currentIndex = 0;
 let mainAudio = null;
 let isPlayingAll = false;
+  let wechatAudio = null;
+let wechatUserManuallyPlaying = false;
 
 function initPlaylist() {
   playlist = Array.from(document.querySelectorAll(".audio-block audio"));
@@ -106,6 +107,19 @@ document.addEventListener("visibilitychange", () => {
   function playFullAudio() {
   const audio = new Audio("audio/wechatfull.mp3"); // вставишь свой файл
   audio.play();
+}
+
+  function bindWechatState() {
+  if (!wechatAudio) return;
+
+  // фиксируем, что пользователь сам нажал play/pause
+  wechatAudio.addEventListener("play", () => {
+    wechatUserManuallyPlaying = true;
+  });
+
+  wechatAudio.addEventListener("pause", () => {
+    wechatUserManuallyPlaying = false;
+  });
 }
   
 function playNextFromMain() {
@@ -274,9 +288,13 @@ if (savedScroll) {
   }, 300);
 }
 
-  if (isWeChat()) {
+ if (isWeChat()) {
   document.getElementById("autoBlock").style.display = "none";
   document.getElementById("wechatTip").style.display = "block";
+
+  wechatAudio = document.getElementById("wechatAudio");
+
+  bindWechatState();
 }
 
   const thanks = document.createElement("div");
@@ -516,6 +534,25 @@ window.onload = function () {
  document.addEventListener("play", function(e) {
    if (e.target.id === "mainAudio") return;
   const audios = document.querySelectorAll("audio");
+   // ❗ если это не верхний WeChat плеер — пауза WeChat
+  if (
+    isWeChat() &&
+    wechatAudio &&
+    e.target !== wechatAudio
+  ) {
+    wechatAudio.pause();
+  }
+
+  // ❗ если играет WeChat — пауза всех точек
+  if (
+    isWeChat() &&
+    wechatAudio &&
+    e.target === wechatAudio
+  ) {
+    audios.forEach(a => {
+      if (a !== wechatAudio) a.pause();
+    });
+  }
 
   audios.forEach(a => {
     if (a !== e.target) {
