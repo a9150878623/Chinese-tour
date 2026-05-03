@@ -134,8 +134,10 @@ function playNextFromMain() {
 
   if (!source || !source.src) return;
 
+ if (mainAudio.src !== source.src) {
   mainAudio.src = source.src;
   mainAudio.load();
+}
 
   highlight(audioEl);
 
@@ -156,11 +158,27 @@ function attachMainPlayerLogic() {
 
   mainAudio.dataset.bound = "1";
 
+  // ▶ PLAY
+  mainAudio.addEventListener("play", () => {
+
+    // ❗ стопаем все точки
+    document.querySelectorAll(".audio-block audio").forEach(a => {
+      a.pause();
+    });
+
+    // ▶ если это первый запуск — стартуем с текущего индекса
+    if (!isPlayingAll) {
+      playNextFromMain();
+    }
+  });
+
+  // ▶ автопереход
   mainAudio.addEventListener("ended", () => {
     currentIndex++;
     playNextFromMain();
   });
 
+  // ▶ пауза
   mainAudio.addEventListener("pause", () => {
     isPlayingAll = false;
   });
