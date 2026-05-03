@@ -82,6 +82,18 @@ let isPlayingAll = false;
 function initPlaylist() {
   playlist = Array.from(document.querySelectorAll(".audio-block audio"));
   mainAudio = document.getElementById("mainAudio");
+
+  // 🔥 ВАЖНО: сразу задаём первый источник
+  if (playlist.length > 0) {
+    const first = playlist[0].querySelector("source");
+
+    if (first && first.src) {
+      mainAudio.src = first.src;
+      mainAudio.load();
+    }
+
+    currentIndex = 0;
+  }
 }
 
 document.addEventListener("visibilitychange", () => {
